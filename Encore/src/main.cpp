@@ -717,7 +717,6 @@ int main(int argc, char* argv[])
 
     menuUI.AddRow();
     menuUI.AddElement(0, new Button("play", { ((float)GetScreenWidth() / 2) - 100, ((float)GetScreenHeight() / 2) - 120, 200, 60 }, "Play"));
-
     menuUI.AddRow();
     menuUI.AddElement(1, new Button("options", { ((float)GetScreenWidth() / 2) - 100, ((float)GetScreenHeight() / 2) - 30, 200, 60 }, "Options"));
 
@@ -731,6 +730,15 @@ int main(int argc, char* argv[])
     menuUI.AddElement(4, new Button("splash", { (float)GetScreenWidth() - 180, (float)GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60 }, ""));
     menuUI.AddElement(4, new Button("discord", { (float)GetScreenWidth() - 120, (float)GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60 }, ""));
     menuUI.AddElement(4, new Button("github", { (float)GetScreenWidth() - 60, (float)GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60 }, ""));
+
+    UI settingsUI;
+    settingsUI.AddRow();
+    settingsUI.AddElement(0, new ToggleGroup("settings_tabs"));
+    settingsUI.GetToggleGroup("settings_tabs")->AddToggle(new Toggle("main", { u.LeftSide + u.winpct(0.005f),u.hpct(0.15f),(u.winpct(0.989f) / 3),u.hinpct(0.05) }, "Main"));
+    settingsUI.GetToggleGroup("settings_tabs")->AddToggle(new Toggle("keyboard_binds", { u.LeftSide + u.winpct(0.005f) + (u.winpct(0.989f) / 3),u.hpct(0.15f),(u.winpct(0.989f) / 3),u.hinpct(0.05) }, "Keyboard Binds"));
+    settingsUI.GetToggleGroup("settings_tabs")->AddToggle(new Toggle("controller_binds", { u.LeftSide + u.winpct(0.005f) + ((u.winpct(0.989f) / 3) * 2),u.hpct(0.15f),(u.winpct(0.989f) / 3),u.hinpct(0.05) }, "Controller Binds"));
+    settingsUI.GetToggleGroup("settings_tabs")->activeIndex = 0;
+
     while (!WindowShouldClose())
     {
 
@@ -866,6 +874,7 @@ int main(int argc, char* argv[])
                 break;
             }
             case SETTINGS: {
+                settingsUI.Update();
                 if (menu.songsLoaded)
                     menu.DrawAlbumArtBackground(menu.ChosenSong.albumArtBlur, assets);
                 if (settingsMain.controllerType == -1 && controllerID != -1) {
@@ -972,12 +981,13 @@ int main(int argc, char* argv[])
                 }
                 static int selectedTab = 0;
                 static int displayedTab = 0;
-
-                GuiToggleGroup({ u.LeftSide + u.winpct(0.005f),OvershellBottom,(u.winpct(0.989f) / 3 ),u.hinpct(0.05) }, "Main;Keyboard Controls;Gamepad Controls", &selectedTab);
+                
                 if (!changingKey && !changingOverdrive && !changingPause) {
+                    selectedTab = settingsUI.GetToggleGroup("settings_tabs")->activeIndex;
                     displayedTab = selectedTab;
                 }
                 else {
+                    settingsUI.GetToggleGroup("settings_tabs")->activeIndex = displayedTab;
                     selectedTab = displayedTab;
                 }
                 float EntryFontSize = u.hinpct(0.03f);
@@ -1247,6 +1257,7 @@ int main(int argc, char* argv[])
                     }                   
                     GuiSetStyle(DEFAULT, TEXT_SIZE, 28);
                 }
+                settingsUI.Draw();
                 break;
             }
             case SONG_SELECT: {
