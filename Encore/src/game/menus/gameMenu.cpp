@@ -268,18 +268,16 @@ void Menu::loadMenu(GLFWgamepadstatefun gamepadStateCallbackSetControls, Assets 
         if (ui.GetButton("quit")->isClicked()) {
             exit(0);
         }
-        if (GuiButton({(float) GetScreenWidth() - 60, (float) GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60}, "")) {
+        if (ui.GetButton("github")->isClicked()) {
             OpenURL("https://github.com/Encore-Developers/Encore-Raylib");
         }
-
-
-        if (GuiButton({(float) GetScreenWidth() - 120, (float) GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60}, "")) {
+        if (ui.GetButton("discord")->isClicked()) {
             OpenURL("https://discord.gg/GhkgVUAC9v");
         }
-    if (GuiButton({(float) GetScreenWidth() - 180, (float) GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60}, "")) {
-        stringChosen = false;
-    }
-        if (GuiButton({(float) GetScreenWidth() - 180, (float) GetScreenHeight() - u.hpct(0.15f) - 120, 180, 60}, "Rescan Songs")) {
+        if (ui.GetButton("splash")->isClicked()) {
+            stringChosen = false;
+        }
+        if (ui.GetButton("rescan")->isClicked()) {
             songsLoaded = false;
             songListMenu.ScanSongs(settings.songPaths);
         }

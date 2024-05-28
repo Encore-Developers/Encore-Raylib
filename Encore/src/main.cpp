@@ -714,13 +714,23 @@ int main(int argc, char* argv[])
     RenderTexture2D notes_tex  = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     UI menuUI;
+
     menuUI.AddRow();
     menuUI.AddElement(0, new Button("play", { ((float)GetScreenWidth() / 2) - 100, ((float)GetScreenHeight() / 2) - 120, 200, 60 }, "Play"));
+
     menuUI.AddRow();
     menuUI.AddElement(1, new Button("options", { ((float)GetScreenWidth() / 2) - 100, ((float)GetScreenHeight() / 2) - 30, 200, 60 }, "Options"));
+
     menuUI.AddRow();
     menuUI.AddElement(2, new Button("quit", { ((float)GetScreenWidth() / 2) - 100, ((float)GetScreenHeight() / 2) + 60, 200, 60 }, "Quit"));
 
+    menuUI.AddRow();
+    menuUI.AddElement(3, new Button("rescan", { (float)GetScreenWidth() - 180, (float)GetScreenHeight() - u.hpct(0.15f) - 120, 180, 60 }, "Rescan Songs"));
+
+    menuUI.AddRow();
+    menuUI.AddElement(4, new Button("splash", { (float)GetScreenWidth() - 180, (float)GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60 }, ""));
+    menuUI.AddElement(4, new Button("discord", { (float)GetScreenWidth() - 120, (float)GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60 }, ""));
+    menuUI.AddElement(4, new Button("github", { (float)GetScreenWidth() - 60, (float)GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60 }, ""));
     while (!WindowShouldClose())
     {
 
