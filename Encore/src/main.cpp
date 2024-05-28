@@ -24,6 +24,7 @@
 #include "raymath.h"
 #include "game/menus/uiUnits.h"
 #include "game/audio.h"
+#include "game/menus/uiSystem.h"
 #include "game/menus/settingsOptionRenderer.h"
 #include "game/timingvalues.h"
 #include <thread>
@@ -573,7 +574,6 @@ bool albumArtLoaded = false;
 settingsOptionRenderer sor;
 
 Song selectedSong;
-
 int main(int argc, char* argv[])
 {
     Units u = Units::getInstance();
@@ -712,8 +712,16 @@ int main(int argc, char* argv[])
     GuiSetFont(assets.rubik);
     assets.LoadAssets();
     RenderTexture2D notes_tex  = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-    while (!WindowShouldClose())
 
+    UI menuUI;
+    menuUI.AddRow();
+    menuUI.AddElement(0, new Button("play", { ((float)GetScreenWidth() / 2) - 100, ((float)GetScreenHeight() / 2) - 120, 200, 60 }, "Play"));
+    menuUI.AddRow();
+    menuUI.AddElement(1, new Button("options", { ((float)GetScreenWidth() / 2) - 100, ((float)GetScreenHeight() / 2) - 30, 200, 60 }, "Options"));
+    menuUI.AddRow();
+    menuUI.AddElement(2, new Button("quit", { ((float)GetScreenWidth() / 2) - 100, ((float)GetScreenHeight() / 2) + 60, 200, 60 }, "Quit"));
+
+    while (!WindowShouldClose())
     {
 
         u.calcUnits();
@@ -756,7 +764,7 @@ int main(int argc, char* argv[])
                     }
                 }
 
-                menu.loadMenu(gamepadStateCallbackSetControls, assets);
+                menu.loadMenu(gamepadStateCallbackSetControls, assets,menuUI);
                 break;
             }
             case CALIBRATION: {

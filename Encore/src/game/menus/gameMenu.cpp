@@ -13,6 +13,7 @@
 #include "game/settings.h"
 #include "game/assets.h"
 #include "game/menus/uiUnits.h"
+#include "game/menus/uiSystem.h"
 #include "raymath.h"
 
 #ifndef GIT_COMMIT_HASH
@@ -51,6 +52,7 @@ void Menu::DrawBottomBottomOvershell() {
     DrawRectangle(0,BottomBottomOvershell,(float)(GetScreenWidth()), (float)GetScreenHeight(),WHITE);
     DrawRectangle(0,BottomBottomOvershell+u.hinpct(0.005f),(float)(GetScreenWidth()), (float)GetScreenHeight(),ColorBrightness(GetColor(0x181827FF),-0.5f));
 }
+
 
 // should be reduced to just PlayerSongStats (instead of Player) eventually
 void Menu::renderPlayerResults(Player player, Song song, Assets assets) {
@@ -178,7 +180,7 @@ void Menu::DrawVersion(Assets assets) {
 
 
 // todo: text box rendering for splashes, cleanup of buttons
-void Menu::loadMenu(GLFWgamepadstatefun gamepadStateCallbackSetControls, Assets assets) {
+void Menu::loadMenu(GLFWgamepadstatefun gamepadStateCallbackSetControls, Assets assets, UI& ui) {
 
     std::filesystem::path directory = GetPrevDirectoryPath(GetApplicationDirectory());
 
@@ -237,9 +239,11 @@ void Menu::loadMenu(GLFWgamepadstatefun gamepadStateCallbackSetControls, Assets 
 
     Rectangle LogoRect = { u.LeftSide + u.winpct(0.01f), u.hpct(0.04f), Remap(assets.encoreWhiteLogo.height, 0, assets.encoreWhiteLogo.width / 4.25, 0, u.winpct(0.5f)), logoHeight};
     DrawTexturePro(assets.encoreWhiteLogo, {0,0,(float)assets.encoreWhiteLogo.width,(float)assets.encoreWhiteLogo.height}, LogoRect, {0,0}, 0, WHITE);
-
+    ui.Update();
+    ui.Draw();
     if (std::filesystem::exists("songCache.encr")) {
-        if (GuiButton({((float) GetScreenWidth() / 2) - 100, ((float) GetScreenHeight() / 2) - 120, 200, 60}, "Play")) {
+        ui.GetButton("play")->text = "Play";
+        if (ui.GetButton("play")->isClicked()) {
 
             for (Song &songi: songListMenu.songs) {
                 songi.titleScrollTime = GetTime();
@@ -251,18 +255,17 @@ void Menu::loadMenu(GLFWgamepadstatefun gamepadStateCallbackSetControls, Assets 
         }
     }else{
         GuiSetStyle(BUTTON,BASE_COLOR_NORMAL, ColorToInt(Color{128,0,0,255}));
-        GuiButton({((float) GetScreenWidth() / 2) - 125, ((float) GetScreenHeight() / 2) - 120, 250, 60}, "Invalid song cache!");
+        ui.GetButton("play")->text = "Invalid cache!";
         songListMenu.ScanSongs(settings.songPaths); 
         songsLoaded = false;
         DrawRectanglePro({((float) GetScreenWidth() / 2) - 125, ((float) GetScreenHeight() / 2) - 120, 250, 60},{0,0},0, Color{0,0,0,64});
         GuiSetStyle(BUTTON,BASE_COLOR_NORMAL, 0x181827FF);
     }
-        if (GuiButton({((float) GetScreenWidth() / 2) - 100, ((float) GetScreenHeight() / 2) - 30, 200, 60},
-                      "Options")) {
+        if (ui.GetButton("options")->isClicked()) {
             glfwSetGamepadStateCallback(gamepadStateCallbackSetControls);
             Menu::SwitchScreen(SETTINGS);
         }
-        if (GuiButton({((float) GetScreenWidth() / 2) - 100, ((float) GetScreenHeight() / 2) + 60, 200, 60}, "Quit")) {
+        if (ui.GetButton("quit")->isClicked()) {
             exit(0);
         }
         if (GuiButton({(float) GetScreenWidth() - 60, (float) GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60}, "")) {

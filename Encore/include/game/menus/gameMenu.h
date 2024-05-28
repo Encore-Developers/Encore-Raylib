@@ -7,6 +7,7 @@
 #include "song/songlist.h"
 #include "game/assets.h"
 #include "game/player.h"
+#include "game/menus/uiSystem.h"
 
 enum Screens {
     MENU,
@@ -61,7 +62,7 @@ public:
     Texture2D AlbumArtBackground;
     bool albumArtLoaded = false;
     void showResults(Player &player, Assets assets);
-    void loadMenu(GLFWgamepadstatefun gamepadStateCallbackSetControls, Assets assets);
+    void loadMenu(GLFWgamepadstatefun gamepadStateCallbackSetControls, Assets assets,UI& ui);
     inline void loadTitleScreen() {};
 
     void SwitchScreen(Screens screen);
