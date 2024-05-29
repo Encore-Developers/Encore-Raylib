@@ -112,19 +112,33 @@ public:
 			 toggles[activeIndex]->state = true;
 		 }
 	 }
+	 ~ToggleGroup() override{
+		 for (auto& t : toggles) {
+			 delete t;
+		 }
+	 }
  };
+
+
+
 
 class Row {
 public:
 	std::string defaultElementID;
 	std::vector<Element*> elements;
 	void Update() {
-		for (auto& element : elements) {
+		for (auto element : elements) {
 			element->Update();
 		}
-	}void Draw() {
-		for (auto& element : elements) {
+	}
+	void Draw() {
+		for (auto element : elements) {
 			element->Draw();
+		}
+	}
+	~Row() {
+		for (auto element : elements) {
+			delete element;
 		}
 	}
 };
@@ -167,6 +181,11 @@ public:
 	}void Draw() {
 		for (auto& row : rows) {
 			row->Draw();
+		}
+	}
+	~UI() {
+		for (auto row : rows) {
+			delete row;
 		}
 	}
 };
