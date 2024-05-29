@@ -237,10 +237,8 @@ static void handleInputs(int lane, int action){
                                 chordNote.HitOffset = chordNote.time - eventTime;
 								overdriveLanesHit[newlane] = false;
 								chordNote.hitTime = eventTime;
-
 								if (chordNote.isPerfect(eventTime, player.InputOffset)) {
 									chordNote.perfect = true;
-
 								}
                                 chordNote.accounted = true;
 								if (chordNote.perfect) player.lastNotePerfect = true;
