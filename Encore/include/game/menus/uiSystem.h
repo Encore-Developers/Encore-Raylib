@@ -5,21 +5,25 @@
 #include <stdexcept>
 #include "raylib.h"
 
+class UI;
 class Element {
 public:
+	bool hovered = false;
 	std::string elementID = "";
-	bool disabled;
+	bool disabled = false;
 	virtual ~Element() = default;
 	void SetID(std::string id) {
 		elementID = id;
 	}
 	virtual void Draw() = 0;
 	virtual void Update() = 0;
+	bool isHovered() const {
+		return hovered;
+	}
 };
 
 class Button : public Element {
 private:
-	bool hovered = false;
 	bool clicked = false;
 public:
 	std::string text = "";
@@ -46,9 +50,50 @@ public:
 	}
 };
 
-class Toggle : public Element {
+class SliderBar : public Element {
 private:
-	bool hovered = false;
+	Button* addButton = new Button("", { 0,0,0,0 }, ">");
+	Button* subButton = new Button("", { 0,0,0,0 }, "<");
+	Rectangle sliderRect{ 0,0,0,0 };
+	Rectangle labelRect{ 0,0,0,0 };
+public:
+	std::string text = "";
+	float sliderValue = 0;
+	float increment = 0.5;
+	float minVal = -10;
+	float maxVal = 10;
+	SliderBar(std::string id, Rectangle labelBounds, Rectangle sliderBounds, std::string labelText, float defaultValue = 0, float incrementBy = 0.5, float min = -10, float max = 10) {
+		SetID(id);
+		labelRect = labelBounds;
+		subButton->bounds = { sliderBounds.x,sliderBounds.y,sliderBounds.height,sliderBounds.height };
+		sliderRect = { sliderBounds.x + sliderBounds.height, sliderBounds.y, sliderBounds.width - (sliderBounds.height * 2),sliderBounds.height };
+		addButton->bounds = { sliderBounds.x+sliderBounds.width-sliderBounds.height,sliderBounds.y,sliderBounds.height,sliderBounds.height};
+		text = labelText;
+		sliderValue = 0;
+		increment = incrementBy;
+		minVal = min;
+		maxVal = max;
+	}
+	void Draw() override {
+		addButton->Draw();
+		subButton->Draw();
+		DrawRectangle(sliderRect.x, sliderRect.y, sliderRect.width, sliderRect.height, GRAY);
+		DrawRectangle(sliderRect.x, sliderRect.y, sliderRect.width*((sliderValue-minVal)/(maxVal-minVal)), sliderRect.height, hovered?BLUE:LIGHTGRAY);
+		
+	}
+	void Update() override {
+		addButton->Update();
+		if (addButton->isClicked() && sliderValue<maxVal) {
+			sliderValue += increment;
+		}
+		subButton->Update();
+		if (subButton->isClicked() && sliderValue > minVal) {
+			sliderValue -= increment;
+		}
+	}
+};
+
+class Toggle : public Element {
 public:
 	bool state = false;
 	std::string text = "";
@@ -71,9 +116,6 @@ public:
 	}
 	bool getState() const {
 		return state;
-	}
-	bool isHovered() const {
-		return hovered;
 	}
 };
 
@@ -119,8 +161,29 @@ public:
 	}
 };
 
-
-
+class TabBar : public Element {
+private:
+	ToggleGroup* tabs = new ToggleGroup("");
+	std::vector<UI*> subUIs;
+public:
+	int activeTab = -1;
+	TabBar(const std::string& id) {
+		SetID(id);
+		tabs->SetID(id + "_tabs");
+	}
+	~TabBar() override {
+		for (auto subUI : subUIs) {
+			delete subUI;
+		}
+		delete tabs;
+	}
+	void AddTab(std::string tabID, Rectangle rect, std::string buttonText, UI* subUI) {
+		tabs->AddToggle(new Toggle(tabID, rect, buttonText));
+		subUIs.push_back(subUI);
+	}
+	void Update() override;
+	void Draw() override;
+};
 
 class Row {
 public:
@@ -171,6 +234,14 @@ public:
 	ToggleGroup* GetToggleGroup(std::string id) {
 		return dynamic_cast<ToggleGroup*>(GetElement(id));
 	}
+
+	SliderBar* GetSliderBar(std::string id) {
+		return dynamic_cast<SliderBar*>(GetElement(id));
+	}
+	TabBar* GetTabBar(std::string id) {
+		return dynamic_cast<TabBar*>(GetElement(id));
+	}
+
 	void AddRow() {
 		rows.push_back(new Row);
 	}

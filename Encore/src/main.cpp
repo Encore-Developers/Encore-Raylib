@@ -729,13 +729,19 @@ int main(int argc, char* argv[])
     menuUI.AddElement(4, new Button("discord", { (float)GetScreenWidth() - 120, (float)GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60 }, ""));
     menuUI.AddElement(4, new Button("github", { (float)GetScreenWidth() - 60, (float)GetScreenHeight() - u.hpct(0.15f) - 60, 60, 60 }, ""));
 
+    menuUI.AddElement(4, new SliderBar("test", { 0,100,100,16 }, { 100,100,300,16 }, ""));
+
+    UI* settings_main = new UI();
+    UI* settings_keybinds = new UI();
+    UI* settings_controllerbinds = new UI();
     UI settingsUI;
     settingsUI.AddRow();
-    settingsUI.AddElement(0, new ToggleGroup("settings_tabs"));
-    settingsUI.GetToggleGroup("settings_tabs")->AddToggle(new Toggle("main", { u.LeftSide + u.winpct(0.005f),u.hpct(0.15f),(u.winpct(0.989f) / 3),u.hinpct(0.05) }, "Main"));
-    settingsUI.GetToggleGroup("settings_tabs")->AddToggle(new Toggle("keyboard_binds", { u.LeftSide + u.winpct(0.005f) + (u.winpct(0.989f) / 3),u.hpct(0.15f),(u.winpct(0.989f) / 3),u.hinpct(0.05) }, "Keyboard Binds"));
-    settingsUI.GetToggleGroup("settings_tabs")->AddToggle(new Toggle("controller_binds", { u.LeftSide + u.winpct(0.005f) + ((u.winpct(0.989f) / 3) * 2),u.hpct(0.15f),(u.winpct(0.989f) / 3),u.hinpct(0.05) }, "Controller Binds"));
-    settingsUI.GetToggleGroup("settings_tabs")->activeIndex = 0;
+    settingsUI.AddElement(0, new TabBar("settings_tabs"));
+    settingsUI.GetTabBar("settings_tabs")->AddTab("main", { u.LeftSide + u.winpct(0.005f),u.hpct(0.15f),(u.winpct(0.989f) / 3),u.hinpct(0.05) }, "Main", settings_main);
+    settingsUI.GetTabBar("settings_tabs")->AddTab("keyboard_binds", { u.LeftSide + u.winpct(0.005f) + (u.winpct(0.989f) / 3),u.hpct(0.15f),(u.winpct(0.989f) / 3),u.hinpct(0.05) }, "Keyboard Binds", settings_keybinds);
+    settingsUI.GetTabBar("settings_tabs")->AddTab("controller_binds", { u.LeftSide + u.winpct(0.005f) + ((u.winpct(0.989f) / 3) * 2),u.hpct(0.15f),(u.winpct(0.989f) / 3),u.hinpct(0.05) }, "Controller Binds", settings_controllerbinds);
+    settingsUI.GetTabBar("settings_tabs")->activeTab = 0;
+
 
     while (!WindowShouldClose())
     {
@@ -981,11 +987,11 @@ int main(int argc, char* argv[])
                 static int displayedTab = 0;
                 
                 if (!changingKey && !changingOverdrive && !changingPause) {
-                    selectedTab = settingsUI.GetToggleGroup("settings_tabs")->activeIndex;
+                    selectedTab = settingsUI.GetTabBar("settings_tabs")->activeTab;
                     displayedTab = selectedTab;
                 }
                 else {
-                    settingsUI.GetToggleGroup("settings_tabs")->activeIndex = displayedTab;
+                    settingsUI.GetTabBar("settings_tabs")->activeTab = displayedTab;
                     selectedTab = displayedTab;
                 }
                 float EntryFontSize = u.hinpct(0.03f);
